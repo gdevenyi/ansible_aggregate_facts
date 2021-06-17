@@ -1,0 +1,11 @@
+---
+- hosts: all
+  tasks:
+    - shell: hostname
+      register: hostname_variable
+
+    - set_fact:
+        hostname_variable_aggregate: "{{ hostname_variable_aggregate | default([]) }} + [ '{{ hostvars[item].hostname_variable.stdout_lines[0] }}' ]"
+      with_items: "{{ ansible_play_hosts }}"
+      run_once: yes
+      delegate_to: 127.0.0.1
